@@ -1,0 +1,26 @@
+name: Pipeline Hibrido Sin Azure
+on:
+  workflow_dispatch:
+
+jobs:
+  hosted-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Tarea Hosted
+        run: echo "Ejecutado en GitHub Hosted Runner."
+
+  self-hosted-job:
+    needs: hosted-job
+    runs-on: [self-hosted, WIN11VCE]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Tarea Local
+        run: |
+          echo "Ejecutado en infraestructura propia."
+          New-Item -ItemType File -Name "prueba-runner.txt"
+          Get-ChildItem
