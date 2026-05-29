@@ -1,0 +1,26 @@
+name: "Caso C: Reusable Workflow"
+
+on:
+  workflow_call:
+    # 1. Definición formal de la interfaz de salida
+    outputs:
+      generated-token:
+        description: "Token temporal generado en el workflow reutilizable"
+        value: ${{ jobs.process-data.outputs.token-output }}
+
+jobs:
+  process-data:
+    name: Generate Secret Data
+    runs-on: ubuntu-latest
+    # 2. Mapeamos el output del job apuntando al step correspondiente
+    outputs:
+      token-output: ${{ steps.generator-step.outputs.temp-token }}
+      
+    steps:
+      - name: Generate Random Token
+        id: generator-step
+        # 3. Escribimos en el archivo de entorno $GITHUB_OUTPUT de manera segura
+        run: |
+          TOKEN_VALUE="JWT_TOKEN_SECRET_XYZ_$(date +%s)"
+          echo "temp-token=$TOKEN_VALUE" >> "$GITHUB_OUTPUT"
+          echo "Token temporal generado con éxito."

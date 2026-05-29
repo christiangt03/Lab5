@@ -1,0 +1,37 @@
+name: "Caso B: Matrix Optimizada"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  matrix-optimized:
+    name: Test with Matrix Inclusion
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Definición limpia usando colecciones específicas para evitar el producto cartesiano masivo
+        include:
+          - os: ubuntu-latest
+            node-version: 18
+            database: postgres
+          - os: windows-latest
+            node-version: 20
+            database: sqlite
+          - os: macos-latest
+            node-version: 20
+            database: mysql
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Run Test on Specified Database
+        run: |
+          echo "Ejecutando en ${{ matrix.os }}"
+          echo "Node version: ${{ matrix.node-version }}"
+          echo "Database target: ${{ matrix.database }}"

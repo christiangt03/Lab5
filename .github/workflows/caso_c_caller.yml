@@ -1,0 +1,26 @@
+name: "Caso C: Caller Workflow"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 1. Invocación del workflow reutilizable pasándole el archivo local
+  call-reusable-workflow:
+    name: Call Reusable Job
+    uses: ./.github/workflows/caso_c_reusable.yml
+
+  # 2. Consumo del output en un job posterior
+  consume-data:
+    name: Consume Reusable Output
+    runs-on: ubuntu-latest
+    # CRÍTICO: Se requiere la relación 'needs' para acceder al ámbito de salida (scope)
+    needs: [call-reusable-workflow]
+    steps:
+      - name: Use Reusable Output
+        run: |
+          # Acceso correcto usando el contexto 'needs'
+          echo "Token recibido exitosamente:"
+          echo "${{ needs.call-reusable-workflow.outputs.generated-token }}"
